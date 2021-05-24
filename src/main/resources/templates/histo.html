@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+<head>
+  <meta charset="UTF-8">
+
+  <title>Spring Boot Google Charts</title>
+
+    <style type="text/css">
+      #chart-container {
+        width: 1200px;
+        height: 900px;
+      }
+    </style>
+
+    <!-- javascript -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+<script>
+$(document).ready(function(){
+	  $.ajax({
+	    url: "http://localhost:8080/data",
+	    method: "GET",
+	    success: function(data) {
+	      console.log(data);
+	      var product = [];
+	      var quantity = [];
+
+	      for(var i in data) {
+	        product.push(data[i].name);
+	        quantity.push(data[i].quantity);
+	      }
+
+	      var chartdata = {
+	        labels: product,
+	        datasets : [
+	          {
+	            label: 'Items',
+	            backgroundColor: 'rgba(100, 100, 200, 0.75)',
+	            borderColor: 'rgba(100, 100, 200, 0.75)',
+	            hoverBackgroundColor: 'rgba(100, 100, 200, 1)',
+	            hoverBorderColor: 'rgba(100, 200, 100, 1)',
+	            data: quantity
+	          }
+	        ]
+	      };
+
+	      var ctx = $("#mycanvas");
+
+	      var barGraph = new Chart(ctx, {
+	        type: 'bar',
+	        data: chartdata
+	      });
+	    },
+	    error: function(data) {
+	      console.log(data);
+	    }
+	  });
+	});
+</script>
+
+</head>
+
+<body>
+
+ <div id="chart-container">
+      <canvas id="mycanvas"></canvas>
+    </div>
+
+</body>
+</html>

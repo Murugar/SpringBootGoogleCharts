@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+
+
+<title>Spring Boot Google Charts Sample</title>
+
+<script type="text/javascript"
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script type="text/javascript"
+	src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script>
+	$(document).ready(
+			function() {
+
+				$.ajax({
+					type : 'GET',
+					headers : {
+						Accept : "application/json; charset=utf-8",
+						"Content-Type" : "application/json; charset=utf-8"
+					},
+					url : 'http://localhost:8080/data',
+					success : function(result) {
+						google.charts.load('current', {
+							'packages' : [ 'corechart' ]
+						});
+						google.charts.setOnLoadCallback(function() {
+							drawChart(result);
+						});
+					}
+				});
+
+				function drawChart(result) {
+
+					var data = new google.visualization.DataTable();
+					data.addColumn('string', 'Name');
+					data.addColumn('number', 'Quantity');
+					var dataArray = [];
+					$.each(result, function(i, obj) {
+						dataArray.push([ obj.name, obj.quantity ]);
+					});
+
+					data.addRows(dataArray);
+
+					var areachart_options = {
+						title : 'Area Chart: Items Sold',
+						width : 600,
+						height : 600
+					};
+					var areachart = new google.visualization.AreaChart(document
+							.getElementById('areachart_div'));
+					areachart.draw(data, areachart_options);
+
+					var linechart_options = {
+						title : 'Linechart: Items Sold',
+						width : 600,
+						height : 600,
+						legend : 'none'
+					};
+					var linechart = new google.visualization.LineChart(document
+							.getElementById('linechart_div'));
+					linechart.draw(data, linechart_options);
+				}
+
+			});
+</script>
+
+</head>
+
+<body>
+
+	<table>
+		<tr>
+			<td><div id="areachart_div" style="border: 1px solid #ccc"></div></td>
+			<td><div id="linechart_div" style="border: 1px solid #ccc"></div></td>
+		</tr>
+	</table>
+
+</body>
+</html>
